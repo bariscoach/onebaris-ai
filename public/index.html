@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OneBaris AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --border: #dde3ec;
+  --ink: #1a1f2e;
+  --ink-soft: #3d4557;
+  --muted: #8a93a8;
+  --stone: #b8c2d4;
+  --blue: #2f6bbf;
+  --blue-light: #4d87d6;
+  --blue-pale: #eaf0fb;
+  --slate: #4a5568;
+}
+
+html, body {
+  min-height: 100%;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 300;
+  color: var(--ink);
+  overflow-x: hidden;
+  background: var(--bg);
+}
+
+/* Background blobs */
+.bg-canvas { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+.bg-blob {
+  position: absolute; border-radius: 50%;
+  filter: blur(90px); opacity: 0.5;
+  animation: drift 20s ease-in-out infinite alternate;
+}
+.bg-blob:nth-child(1) { width: 55vw; height: 55vw; top: -20%; left: -10%; background: radial-gradient(circle, #c8d9f5 0%, transparent 70%); animation-duration: 22s; }
+.bg-blob:nth-child(2) { width: 45vw; height: 45vw; top: 25%; right: -12%; background: radial-gradient(circle, #d6e4f7 0%, transparent 70%); animation-duration: 17s; animation-delay: -6s; }
+.bg-blob:nth-child(3) { width: 38vw; height: 38vw; bottom: -10%; left: 25%; background: radial-gradient(circle, #e0eaf8 0%, transparent 70%); animation-duration: 25s; animation-delay: -12s; }
+
+@keyframes drift {
+  0%   { transform: translate(0,0) scale(1); }
+  33%  { transform: translate(3%,5%) scale(1.05); }
+  66%  { transform: translate(-2%,2%) scale(0.96); }
+  100% { transform: translate(2%,-4%) scale(1.03); }
+}
+
+/* Page */
+.page {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: flex-start; justify-content: center;
+  padding: 6rem 1.5rem 7rem;
+  max-width: 700px; margin: 0 auto; width: 100%;
+}
+
+/* Logo */
+.logo {
+  position: fixed; top: 0;
+  left: 0; right: 0;
+  display: flex; align-items: center;
+  z-index: 10;
+  padding: 1rem max(1.5rem, calc(50% - 350px + 1.5rem));
+  background: rgba(244,246,249,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  animation: fadeUp 0.6s ease both;
+}
+.logo-one  { font-size: 1.45rem; font-weight: 300; color: var(--slate); letter-spacing: -0.01em; }
+.logo-baris { font-size: 1.45rem; font-weight: 700; color: var(--blue); letter-spacing: -0.01em; }
+.logo-space { display: inline-block; width: 0.45rem; }
+.logo-ai {
+  font-size: 1.45rem; font-weight: 300; letter-spacing: -0.01em;
+  background: linear-gradient(90deg, #4285f4, #7b68ee, #a855f7, #ec4899, #ef4444, #f97316, #eab308, #22c55e, #4285f4, #7b68ee, #a855f7, #ec4899);
+  background-size: 300% 100%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  animation: rainbowShift 8s linear infinite;
+}
+
+/* Header */
+.header { text-align: left; margin-bottom: 0.6rem; animation: fadeUp 0.7s 0.1s ease both; }
+
+h1 {
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  font-weight: 300; color: var(--ink);
+  line-height: 1.25; letter-spacing: -0.01em;
+}
+h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
+
+/* One-liner */
+.one-liner {
+  font-size: 0.88rem;
+  color: var(--muted);
+  font-weight: 400;
+  margin-bottom: 2rem;
+  animation: fadeUp 0.7s 0.18s ease both;
+  letter-spacing: 0.01em;
+}
+
+/* Rainbow border */
+.rainbow-wrap {
+  padding: 2px; border-radius: 20px; position: relative;
+  background: linear-gradient(90deg, #4285f4, #7b68ee, #a855f7, #ec4899, #ef4444, #f97316, #eab308, #22c55e, #4285f4, #7b68ee, #a855f7, #ec4899);
+  background-size: 300% 100%;
+  animation: rainbowShift 8s linear infinite;
+}
+
+@keyframes rainbowShift {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 300% 0%; }
+}
+
+/* Input */
+.input-wrap { width: 100%; max-width: 660px; animation: fadeUp 0.7s 0.22s ease both; }
+
+.input-box {
+  background: var(--surface); border: none; border-radius: 18px;
+  padding: 1.2rem 1.4rem;
+  box-shadow: 0 2px 16px rgba(47,107,191,0.07);
+  transition: box-shadow 0.3s; position: relative;
+}
+.input-box:focus-within { box-shadow: 0 4px 24px rgba(47,107,191,0.12); }
+.input-content { position: relative; z-index: 1; }
+
+#chat-input {
+  width: 100%; background: none; border: none; outline: none;
+  color: var(--ink); font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.96rem; font-weight: 300; resize: none;
+  min-height: 26px; max-height: 150px; line-height: 1.65;
+}
+#chat-input::placeholder { color: var(--stone); }
+
+.input-footer {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-top: 0.85rem;
+}
+
+.input-hint { font-size: 0.69rem; color: var(--stone); letter-spacing: 0.04em; }
+.input-hint kbd {
+  display: inline-block; padding: 0.1rem 0.35rem;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 4px; font-size: 0.65rem; font-family: inherit;
+  color: var(--muted);
+}
+
+.send-btn {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--blue); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s, opacity 0.25s, background 0.2s;
+  opacity: 0.3; position: relative;
+}
+.send-btn.active { opacity: 1; }
+.send-btn.loading-state { opacity: 1; background: var(--stone); cursor: not-allowed; }
+.send-btn:not(.loading-state):hover { transform: scale(1.1); background: var(--blue-light); }
+.send-btn svg { width: 14px; height: 14px; fill: white; }
+
+/* Spinner inside send btn */
+.send-spinner {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+.send-btn.loading-state .send-icon { display: none; }
+.send-btn.loading-state .send-spinner { display: block; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Chips */
+.chips {
+  display: flex; flex-wrap: wrap; gap: 0.55rem;
+  justify-content: flex-start;
+  margin-top: 1.4rem; width: 100%; max-width: 660px;
+  animation: fadeUp 0.7s 0.32s ease both;
+}
+
+.chips-center {
+  width: 100%; display: flex;
+  justify-content: center; gap: 0.55rem;
+}
+
+.chip {
+  padding: 0.48rem 1.05rem; border-radius: 100px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  color: var(--ink-soft); font-size: 0.8rem;
+  font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 400;
+  cursor: pointer; transition: all 0.3s ease; white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(47,107,191,0.05);
+  position: relative; overflow: hidden;
+}
+.chip:hover {
+  background: linear-gradient(90deg, #4285f4, #7b68ee, #a855f7, #ec4899);
+  border-color: transparent; color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(66,133,244,0.3);
+}
+.chip.active-chip {
+  background: var(--blue); border-color: var(--blue);
+  color: white; box-shadow: 0 4px 14px rgba(47,107,191,0.3);
+}
+.chip .ci { margin-right: 0.3rem; }
+
+/* Book button */
+.chip-book {
+  text-decoration: none; background: var(--ink);
+  border-color: var(--ink); color: white; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 0.45rem;
+}
+.chip-book:hover {
+  background: linear-gradient(90deg, #4285f4, #7b68ee, #a855f7, #ec4899);
+  border-color: transparent; color: white;
+  transform: translateY(-2px); box-shadow: 0 6px 20px rgba(66,133,244,0.3);
+}
+.book-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #22c55e; flex-shrink: 0;
+  animation: bookPulse 1.6s ease infinite;
+}
+@keyframes bookPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.6); }
+  60%  { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+  100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+}
+
+/* Response */
+#response-area { width: 100%; max-width: 660px; margin-top: 1.4rem; display: none; }
+
+.response-card {
+  background: var(--surface); border: none; border-radius: 18px;
+  padding: 1.5rem 1.75rem;
+  box-shadow: 0 4px 24px rgba(47,107,191,0.08);
+  animation: fadeUp 0.4s ease both; position: relative;
+}
+
+.response-question {
+  font-size: 0.78rem; font-weight: 500;
+  color: var(--muted); margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  letter-spacing: 0.01em;
+}
+
+.response-label {
+  font-size: 0.67rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--blue);
+  margin-bottom: 0.9rem; display: flex; align-items: center;
+  gap: 0.4rem; font-weight: 500;
+}
+.resp-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--blue); animation: blink 1.4s ease infinite;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+.response-text { font-size: 0.94rem; line-height: 1.82; color: var(--ink-soft); }
+.response-text p { margin-bottom: 0.75rem; }
+.response-text p:last-child { margin-bottom: 0; }
+.response-text strong { color: var(--ink); font-weight: 500; }
+.response-text a { color: var(--blue); text-decoration: none; border-bottom: 1px solid rgba(47,107,191,0.25); }
+.response-text a:hover { border-color: var(--blue); }
+
+/* Ask another */
+.ask-another {
+  display: none; margin-top: 1rem;
+  padding-top: 0.9rem; border-top: 1px solid var(--border);
+  align-items: center; gap: 0.6rem;
+}
+.ask-another.visible { display: flex; }
+.ask-another-text { font-size: 0.78rem; color: var(--muted); }
+.ask-another-btn {
+  font-size: 0.78rem; font-weight: 500; color: var(--blue);
+  background: var(--blue-pale); border: none; border-radius: 8px;
+  padding: 0.3rem 0.75rem; cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: background 0.2s;
+}
+.ask-another-btn:hover { background: #d4e6f8; }
+
+.typing-cursor {
+  display: inline-block; width: 2px; height: 1em;
+  background: var(--blue); margin-left: 1px;
+  vertical-align: middle; animation: blink 0.75s step-end infinite;
+}
+
+.loading { display: flex; gap: 5px; padding: 0.3rem 0; }
+.dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--blue); animation: bounce 1.2s ease infinite;
+}
+.dot:nth-child(2) { animation-delay: 0.15s; }
+.dot:nth-child(3) { animation-delay: 0.3s; }
+@keyframes bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.3; }
+  40% { transform: translateY(-5px); opacity: 1; }
+}
+
+/* Footer */
+.footer {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(14px);
+  border-top: 1.5px solid var(--border);
+  display: flex; align-items: center;
+  justify-content: center; gap: 2rem;
+  padding: 0.8rem 2rem;
+  animation: fadeUp 1s 0.5s ease both; z-index: 10;
+}
+.footer-group { display: flex; align-items: center; gap: 0.4rem; }
+.footer-label {
+  font-size: 0.7rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--stone);
+  font-weight: 600; margin-right: 0.3rem;
+}
+.footer-divider { width: 1px; height: 22px; background: var(--border); }
+.footer a {
+  display: flex; align-items: center; gap: 0.35rem;
+  color: var(--ink-soft); font-size: 0.84rem; font-weight: 500;
+  text-decoration: none; padding: 0.32rem 0.7rem;
+  border-radius: 8px; transition: all 0.2s;
+}
+.footer a:hover { background: var(--blue-pale); color: var(--blue); }
+.footer a svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+@media (max-width: 600px) {
+  h1 { font-size: 1.6rem; }
+  .footer { gap: 0.8rem; padding: 0.7rem 1rem; flex-wrap: wrap; }
+  .footer a span.link-text { display: none; }
+  .footer-label { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-canvas">
+  <div class="bg-blob"></div>
+  <div class="bg-blob"></div>
+  <div class="bg-blob"></div>
+</div>
+
+<div class="page">
+
+  <div class="logo">
+    <span class="logo-one">One</span><span class="logo-baris">Baris</span><span class="logo-space"> </span><span class="logo-ai">AI</span>
+  </div>
+
+  <div class="header">
+    <h1>Hi Visitor, <em>Where should we start?</em></h1>
+  </div>
+
+  <p class="one-liner">15 years in CX, customer success, and business operations. Ask me anything.</p>
+
+  <div class="input-wrap">
+    <div class="rainbow-wrap">
+      <div class="input-box">
+        <div class="input-content">
+          <textarea id="chat-input" placeholder="Ask me anything, or pick a topic below…" rows="1"></textarea>
+          <div class="input-footer">
+            <span class="input-hint">Press <kbd>↵</kbd> to send</span>
+            <button class="send-btn" id="send-btn" onclick="sendMessage()">
+              <svg class="send-icon" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+              <div class="send-spinner"></div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chips" id="chips">
+    <button class="chip" data-q="Tell me about his professional experience in detail" onclick="askChip(this)"><span class="ci">🧭</span> Career journey</button>
+    <button class="chip" data-q="What are his hobbies and personal interests?" onclick="askChip(this)"><span class="ci">🎸</span> Beyond work</button>
+    <button class="chip" data-q="Tell me about his side projects" onclick="askChip(this)"><span class="ci">🛠️</span> Things I've built</button>
+    <button class="chip" data-q="Tell me his life story — where he grew up and how he got here" onclick="askChip(this)"><span class="ci">🌍</span> How I got here</button>
+    <div class="chips-center">
+      <button class="chip" data-q="How can I reach out to Barış?" onclick="askChip(this)"><span class="ci">✉️</span> Let's connect</button>
+      <button class="chip" data-q="Why should I hire Barış? Give me the full pitch." onclick="askChip(this)"><span class="ci">⭐</span> Why work with me?</button>
+      <a href="https://calendly.com/barishiz/30min" target="_blank" class="chip chip-book">
+        <span class="book-dot"></span> Book time with me
+      </a>
+    </div>
+  </div>
+
+  <div id="response-area">
+    <div class="rainbow-wrap">
+      <div class="response-card">
+        <div class="response-question" id="response-question"></div>
+        <div class="response-label"><div class="resp-dot"></div> Barış responds</div>
+        <div class="response-text" id="response-text">
+          <div class="loading"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        </div>
+        <div class="ask-another" id="ask-another">
+          <span class="ask-another-text">Want to know more?</span>
+          <button class="ask-another-btn" onclick="resetToStart()">Ask something else</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="footer-group">
+    <span class="footer-label">Contact</span>
+    <a href="mailto:barishiz@gmail.com">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+      <span class="link-text">barishiz@gmail.com</span>
+    </a>
+    <a href="https://www.linkedin.com/in/barishiz/" target="_blank">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      <span class="link-text">linkedin.com/in/barishiz</span>
+    </a>
+  </div>
+  <div class="footer-divider"></div>
+  <div class="footer-group">
+    <span class="footer-label">Built by Barış</span>
+    <a href="https://nordcx.com" target="_blank">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <span class="link-text">NordCX</span>
+    </a>
+    <a href="https://pageready.ca" target="_blank">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span class="link-text">PageReady</span>
+    </a>
+    <a href="https://wordhuntly.com" target="_blank">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="link-text">WordHuntly</span>
+    </a>
+  </div>
+</div>
+
+<script>
+const SYSTEM_PROMPT = `You are an interactive personal assistant representing Barış Hız (pronounced "BAH-rish HUZ"). Answer questions from recruiters and curious visitors about Barış in a warm, confident, first-person tone, as if Barış himself is speaking directly to the visitor. Keep responses under 220 words. Use paragraph breaks, not bullet lists. Be specific and human, not corporate. No em dashes.
+
+PROFESSIONAL EXPERIENCE:
+
+Nord CX | Co-Founder | Oct 2025 to Present
+NordCX is a side consulting venture I co-founded to keep doing meaningful CX work while I look for the right full-time opportunity. We work with organizations to design customer experience strategies, develop training programs, and build operational frameworks that turn CX intent into consistent delivery. Clients come to us when they are scaling a support function, building a customer-centric culture, or need to close the gap between what leadership thinks the experience is and what customers are actually feeling. I am actively open to the right full-time role in customer experience, customer success, or business operations leadership — NordCX is something I will continue on the side regardless.
+
+Umapped (Flight Centre Travel Group) | Head of Product Analytics and Operations | Jun 2020 to Sep 2025
+At the intersection of data, strategy, and business operations. Built and maintained 100+ forecasting models and performance dashboards across AWS QuickSight, Power BI, and Looker Studio. Led end-to-end QBR preparation and delivery. Core member of the SWOT team driving quarterly OKR alignment and annual business planning. Owned SOP design, vendor coordination, compliance tracking, finance and HR operations. Managed executive communications and All Hands preparation across a globally distributed organization.
+
+Umapped (Flight Centre Travel Group) | Customer Success and Operations Leader | Dec 2018 to May 2020
+Guided the team through a 5.8x growth in user base following Flight Centre's acquisition, from 1,000 to 5,800 customers across five continents. CSAT lifted from 75% to 90% in under 12 months. Headcount growth kept under 10% throughout the entire scale-up. Rebuilt the Customer Support Portal and integrated customer feedback loops into product development cycles.
+
+Armut | Customer Experience and Operations Manager | Feb 2016 to Feb 2017
+Armut is Turkey's largest home services marketplace, with 1M+ users. Managed a CX and operations team of 20+ across customer experience and back-office functions. Rolled out omnichannel service capabilities across phone, email, and chat.
+
+Expertera / Etiya | Senior Project Manager | Mar 2017 to Dec 2018
+Led the product strategy and launch of Expertera Zen, Turkey's first digital on-demand work platform.
+
+Turkcell Global Bilgi | CX and Process Management Lead | Nov 2012 to Jan 2016
+Started as a CX and Process Management Specialist and progressed through Project Manager to leading customer experience across Turkcell TV+ (IPTV), Social Media, and the Premium Customer segment. Turkcell Global Bilgi was the operational backbone of Turkey's largest telecom operator, serving a customer base of over 35 million. This is where I developed my core instincts around process design, voice of the customer, and what it takes to deliver consistent service at scale. Led CX and complaint management transformation for the Social Media channel and Premium Customer segment, significantly improving resolution times and satisfaction rates. Provided structured product feedback to IT and product teams, directly influencing bug resolution cycles and platform improvements for Turkcell TV+. Managed corporate customer database restructuring to improve service personalization and data quality. Prepared and delivered voice of the customer analyses, cost-benefit analyses, and customer satisfaction evaluations to drive continuous improvement.
+
+AXA Sigorta | Operational Excellence and Process Improvement Lead | Jul 2011 to Nov 2012
+Led cross-departmental process improvement under AXA Way (Lean Six Sigma) methodology. Completed AXA's Lean Six Sigma Black Belt certification program in France. Presented impact reports to senior leadership and AXA Global.
+
+Earlier: Norm Consulting, TUSİAD EU-Brussels Representative Office (research internship via Sciences Po Grenoble scholarship), Dogu Marmara ABİGEM (first professional role, won Best Business Matchmaking award at Hannover Messe 2009).
+
+HOBBIES:
+Playing keyboard since age 6, competed through high school. Fretless classical guitar since age 16. Basketball.
+
+SIDE PROJECTS:
+NordCX (nordcx.com): CX consultancy and training firm.
+PageReady (pageready.ca): One-page websites for small businesses in Burlington, Oakville, Milton at $500 CAD with 48-hour delivery.
+WordHuntly (wordhuntly.com): A word game project.
+
+LIFE STORY:
+Grew up in Istanbul playing keyboard from age six, competed through high school. Picked up guitar at sixteen and never stopped. Learned French in nine months to enter Marmara University's French-speaking political science program, graduated top of class, won a French Government scholarship to Sciences Po Grenoble, and did a research internship at TUSİAD's EU-Brussels office. Then chose industry over public sector, built a career across Istanbul for the better part of a decade, starting with international business development, moving into process improvement at AXA, then CX leadership at Turkcell's BPO and Turkey's largest home services marketplace. Moved to Toronto in 2018. 15 years in CX and operations across corporate giants, funded startups, and global SaaS. Trilingual in English, French, and Turkish.
+
+WHY HIRE HIM:
+I've spent 15 years building customer experience functions and leading operations across some really different contexts. Started at AXA Sigorta leading Lean Six Sigma process improvements across departments, completed my Black Belt certification in France, and presented impact work directly to global leadership. That taught me how large organizations actually move.
+
+Then Turkcell Global Bilgi, the operational backbone behind Turkey's largest telecom with 35 million subscribers. I started as a CX and Process Management Specialist and grew into leading customer experience for Turkcell TV+, Social Media, and the Premium Customer segment. Managed complaint transformation, cut resolution times dramatically, fed structured product feedback directly into IT roadmaps. That is where I learned what it takes to deliver consistent service at serious scale.
+
+Moved to Armut in 2016, Turkey's largest home services marketplace with over a million users. Managed a CX and ops team of 20+, rolled out omnichannel support across phone, email, and chat. Then spent a year at Expertera leading the product strategy and launch of Turkey's first digital on-demand work platform.
+
+Relocated to Toronto in 2018 and joined Umapped as Customer Success and Operations Leader. Guided the team through Flight Centre's acquisition and a 5.8x user growth, from 1,000 to 5,800 customers across five continents. CSAT went from 75% to 90% in under a year. Headcount growth stayed under 10% the entire time. That role expanded into Head of Product Analytics and Operations until September 2025, where I built 100+ forecasting models, led quarterly business reviews, owned SOP design, and became a core member of the strategic leadership team driving OKR alignment and annual planning.
+
+Now running NordCX on the side while actively looking for the right full-time role in customer experience, customer success, or business operations leadership. Lean Six Sigma Black Belt. Trilingual in English, French, and Turkish. Based in Greater Toronto Area, open to hybrid or remote in Canada and the US.
+
+HOW TO REACH:
+Email: barishiz@gmail.com
+LinkedIn: https://www.linkedin.com/in/barishiz/`;
+
+const textarea = document.getElementById('chat-input');
+const sendBtn = document.getElementById('send-btn');
+const responseArea = document.getElementById('response-area');
+const responseText = document.getElementById('response-text');
+const responseQuestion = document.getElementById('response-question');
+const askAnother = document.getElementById('ask-another');
+let activeChip = null;
+
+textarea.addEventListener('input', () => {
+  textarea.style.height = 'auto';
+  textarea.style.height = textarea.scrollHeight + 'px';
+  sendBtn.classList.toggle('active', textarea.value.trim().length > 0);
+});
+
+textarea.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    if (textarea.value.trim()) sendMessage();
+  }
+});
+
+function askChip(el) {
+  // Highlight active chip
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active-chip'));
+  el.classList.add('active-chip');
+  activeChip = el;
+
+  const question = el.getAttribute('data-q');
+  textarea.value = question;
+  textarea.style.height = 'auto';
+  textarea.style.height = textarea.scrollHeight + 'px';
+  sendBtn.classList.add('active');
+  sendMessage(el.textContent.trim());
+}
+
+function resetToStart() {
+  responseArea.style.display = 'none';
+  askAnother.classList.remove('visible');
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active-chip'));
+  textarea.value = '';
+  textarea.style.height = 'auto';
+  sendBtn.classList.remove('active');
+  textarea.focus();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function sendMessage(chipLabel) {
+  const question = textarea.value.trim();
+  if (!question) return;
+
+  const displayQ = chipLabel || question;
+  textarea.value = '';
+  textarea.style.height = 'auto';
+  sendBtn.classList.remove('active');
+  sendBtn.classList.add('loading-state');
+  askAnother.classList.remove('visible');
+
+  responseArea.style.display = 'block';
+  responseQuestion.textContent = displayQ;
+  responseText.innerHTML = '<div class="loading"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  responseArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: question }]
+      })
+    });
+
+    const data = await res.json();
+    const text = data.content?.[0]?.text || "I would love to answer that. Feel free to reach out at barishiz@gmail.com!";
+    const len = text.length;
+    const speed = len < 300 ? 12 : len < 600 ? 16 : 22;
+    typeText(formatText(text), speed);
+  } catch (err) {
+    responseText.innerHTML = 'Something went wrong. Please reach out at <a href="mailto:barishiz@gmail.com">barishiz@gmail.com</a>.';
+    askAnother.classList.add('visible');
+  } finally {
+    sendBtn.classList.remove('loading-state');
+  }
+}
+
+function formatText(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank">$1</a>')
+    .replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g, '<a href="mailto:$1">$1</a>')
+    .split('\n\n')
+    .map(p => p.trim()).filter(p => p)
+    .map(p => `<p>${p.replace(/\n/g, ' ')}</p>`)
+    .join('');
+}
+
+function typeText(html, speed = 16) {
+  const plain = html.replace(/<[^>]+>/g, '');
+  let i = 0;
+  responseText.innerHTML = '';
+  const interval = setInterval(() => {
+    i += Math.ceil(speed / 4);
+    responseText.innerHTML = plain.slice(0, i) + '<span class="typing-cursor"></span>';
+    if (i >= plain.length) {
+      clearInterval(interval);
+      responseText.innerHTML = html;
+      askAnother.classList.add('visible');
+    }
+  }, speed);
+}
+</script>
+</body>
+</html>
