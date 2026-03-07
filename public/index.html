@@ -56,7 +56,7 @@ html, body {
   min-height: 100vh;
   display: flex; flex-direction: column;
   align-items: flex-start; justify-content: center;
-  padding: 6rem 1.5rem 7rem;
+  padding: 6rem 1.5rem 8rem;
   max-width: 700px; margin: 0 auto; width: 100%;
 }
 
@@ -72,6 +72,7 @@ html, body {
   border-bottom: 1px solid var(--border);
   animation: fadeUp 0.6s ease both;
 }
+.logo-icon { width: 32px; height: 32px; margin-right: 0.6rem; flex-shrink: 0; }
 .logo-one  { font-size: 1.45rem; font-weight: 300; color: var(--slate); letter-spacing: -0.01em; }
 .logo-baris { font-size: 1.45rem; font-weight: 700; color: var(--blue); letter-spacing: -0.01em; }
 .logo-space { display: inline-block; width: 0.45rem; }
@@ -362,11 +363,86 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-@media (max-width: 600px) {
-  h1 { font-size: 1.6rem; }
-  .footer { gap: 0.8rem; padding: 0.7rem 1rem; flex-wrap: wrap; }
-  .footer a span.link-text { display: none; }
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .page {
+    padding: 5rem 1.2rem 8rem;
+    align-items: stretch;
+  }
+
+  .logo {
+    padding: 0.85rem 1.2rem;
+  }
+
+  .logo-one, .logo-baris, .logo-ai {
+    font-size: 1.25rem;
+  }
+
+  .greeting { font-size: 0.9rem; }
+
+  h1 { font-size: clamp(1.55rem, 6vw, 2rem); }
+
+  .one-liner { font-size: 0.84rem; margin-bottom: 1.5rem; }
+
+  .input-wrap { max-width: 100%; }
+
+  #chat-input { font-size: 0.92rem; }
+
+  .input-hint { font-size: 0.72rem; }
+
+  /* Chips */
+  .chips { gap: 0.5rem; }
+  .chip {
+    font-size: 0.78rem;
+    padding: 0.45rem 0.85rem;
+    white-space: nowrap;
+  }
+  .chips-center {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+  .chip-book { white-space: nowrap; }
+
+  /* Response card */
+  #response-area { margin-top: 1rem; }
+  .response-card { padding: 1.1rem 1.1rem; }
+  .response-question { font-size: 0.82rem; }
+  .response-text { font-size: 0.88rem; }
+  .ask-another-btn { font-size: 0.8rem; padding: 0.5rem 1rem; }
+
+  /* Footer: two compact rows */
+  .footer {
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.6rem 1rem;
+  }
+  .footer-group {
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .footer-divider { display: none; }
   .footer-label { display: none; }
+  .footer a {
+    font-size: 0.74rem;
+    padding: 0.25rem 0.5rem;
+  }
+  .footer a svg { width: 13px; height: 13px; }
+}
+
+@media (max-width: 400px) {
+  .page { padding: 4.5rem 1rem 9rem; }
+  h1 { font-size: 1.4rem; }
+  .chip { font-size: 0.74rem; padding: 0.4rem 0.7rem; }
+  .chips { gap: 0.4rem; }
+  .footer a { font-size: 0.7rem; }
+  .footer { padding: 0.5rem 0.75rem; }
+}
+
+@media (min-width: 769px) {
+  .page { padding: 6rem 2rem 7rem; }
+  .chips-center { justify-content: flex-start; }
 }
 </style>
 </head>
@@ -381,6 +457,12 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
 <div class="page">
 
   <div class="logo">
+    <svg class="logo-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="18" cy="18" r="17" fill="#2f6bbf"/>
+      <circle cx="13" cy="17" r="2" fill="white"/>
+      <circle cx="23" cy="17" r="2" fill="white"/>
+      <path d="M12 23c1.5 2.5 4 4 6 4s4.5-1.5 6-4" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    </svg>
     <span class="logo-one">One</span><span class="logo-baris">Baris</span><span class="logo-space"> </span><span class="logo-ai">AI</span>
   </div>
 
@@ -443,7 +525,7 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
 <div class="footer">
   <div class="footer-group">
     <span class="footer-label">Contact</span>
-    <a href="mailto:barishiz@gmail.com">
+    <a href="/cdn-cgi/l/email-protection#781a190a110b101102381f15191114561b1715">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
       <span class="link-text">Email me</span>
     </a>
@@ -470,7 +552,7 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const SYSTEM_PROMPT = `You are an interactive personal assistant representing Barış Hız (pronounced "BAH-rish HUZ"). Your ONLY purpose is to answer questions about Barış — his career, experience, skills, background, side projects, and how to contact him. You are not a general assistant.
 
 STRICT RULES:
@@ -644,14 +726,4 @@ function typeText(html, speed = 16) {
     if (i >= plain.length) {
       clearInterval(interval);
       responseText.innerHTML = html;
-      askAnother.classList.add('visible');
-    }
-  }, speed);
-}
-
-window.askChip = askChip;
-window.resetToStart = resetToStart;
-window.sendMessage = sendMessage;
-</script>
-</body>
-</html>
+      askAnother.classList.add('visib
