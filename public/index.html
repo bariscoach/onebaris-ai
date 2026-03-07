@@ -162,7 +162,8 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
   width: 100%; background: none; border: none; outline: none;
   color: var(--ink); font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.96rem; font-weight: 300; resize: none;
-  min-height: 26px; max-height: 150px; line-height: 1.65;
+  min-height: 26px; max-height: 200px; line-height: 1.65;
+  overflow-y: auto; word-wrap: break-word; white-space: pre-wrap;
 }
 #chat-input::placeholder { color: var(--stone); }
 
@@ -398,7 +399,8 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
 
   .input-wrap { max-width: 100%; }
 
-  #chat-input { font-size: 0.92rem; }
+  #chat-input { font-size: 0.92rem; max-height: 160px; overflow-y: auto; }
+  .input-box { padding: 1rem 1.1rem; }
 
   .input-hint { font-size: 0.72rem; }
 
