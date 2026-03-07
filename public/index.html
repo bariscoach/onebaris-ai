@@ -59,6 +59,29 @@ html, body {
   animation: fadeUp 0.6s ease both;
 }
 .logo-link { display: flex; align-items: center; text-decoration: none; }
+/* Language switcher */
+.lang-switcher {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+.lang-btn {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 0.28rem 0.55rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.04em;
+}
+.lang-btn:hover { color: var(--blue); border-color: var(--border); }
+.lang-btn.active { color: var(--blue); border-color: var(--blue); background: var(--blue-pale); font-weight: 600; }
+
 .logo-link:hover .logo-icon { opacity: 0.85; }
 .logo-icon { width: 32px; height: 32px; margin-right: 0.6rem; flex-shrink: 0; }
 .logo-one  { font-size: 1.45rem; font-weight: 300; color: var(--slate); letter-spacing: -0.01em; }
@@ -185,14 +208,15 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
 /* Chips */
 .chips {
   display: flex; flex-wrap: wrap; gap: 0.55rem;
-  justify-content: flex-start;
+  justify-content: center;
   margin-top: 1.4rem; width: 100%; max-width: 660px;
   animation: fadeUp 0.7s 0.32s ease both;
 }
 
 .chips-center {
   width: 100%; display: flex;
-  justify-content: center; gap: 0.55rem;
+  justify-content: flex-start; gap: 0.55rem;
+  flex-wrap: wrap;
 }
 
 .chip {
@@ -465,6 +489,11 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
       </svg>
       <span class="logo-one">One</span><span class="logo-baris">Baris</span><span class="logo-space"> </span><span class="logo-ai">AI</span>
     </a>
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('en', this)">EN</button>
+      <button class="lang-btn" onclick="setLang('fr', this)">FR</button>
+      <button class="lang-btn" onclick="setLang('tr', this)">TR</button>
+    </div>
   </div>
 
   <div class="header">
@@ -496,13 +525,11 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
     <button class="chip" data-q="What are his hobbies and personal interests?" onclick="askChip(this)"><span class="ci">🎸</span> Beyond work</button>
     <button class="chip" data-q="Tell me about his side projects" onclick="askChip(this)"><span class="ci">🛠️</span> Things I've built</button>
     <button class="chip" data-q="Tell me his life story — where he grew up and how he got here" onclick="askChip(this)"><span class="ci">🌍</span> How I got here</button>
-    <div class="chips-center">
-      <button class="chip" data-q="How can someone reach out to connect with Barış? Give a warm, inviting response and tell them to click the email or LinkedIn link in the footer, or book time directly via Calendly." onclick="askChip(this)"><span class="ci">✉️</span> Let's connect</button>
-      <button class="chip" data-q="Why should I hire Barış? Give me the full pitch." onclick="askChip(this)"><span class="ci">⭐</span> Why work with me?</button>
-      <a href="https://calendly.com/barishiz/30min" target="_blank" class="chip chip-book">
-        <span class="book-dot"></span> Book time with me
-      </a>
-    </div>
+    <button class="chip" data-q="How can someone reach out to connect with Barış? Give a warm, inviting response and tell them to click the email or LinkedIn link in the footer, or book time directly via Calendly." onclick="askChip(this)"><span class="ci">✉️</span> Let's connect</button>
+    <button class="chip" data-q="Why should I hire Barış? Give me the full pitch." onclick="askChip(this)"><span class="ci">⭐</span> Why work with me?</button>
+    <a href="https://calendly.com/barishiz/30min" target="_blank" class="chip chip-book">
+      <span class="book-dot"></span> Book time with me
+    </a>
   </div>
 
   <div id="response-area">
@@ -624,6 +651,107 @@ const responseArea = document.getElementById('response-area');
 const responseText = document.getElementById('response-text');
 const responseQuestion = document.getElementById('response-question');
 const askAnother = document.getElementById('ask-another');
+
+let currentLang = 'en';
+
+const LANG_LABELS = {
+  en: {
+    greeting: 'Hi Visitor',
+    headline: 'Where should we start?',
+    oneliner: '15 years in CX, customer success, and business operations. Ask me anything about me.',
+    placeholder: 'Ask me anything about me, or pick a topic below…',
+    chips: ['Career journey', 'Beyond work', "Things I've built", 'How I got here', "Let's connect", 'Why work with me?', 'Book time with me'],
+    respondingLabel: 'Baris responds',
+    askAnother: 'Ask something else',
+    wantMore: 'Want to know more?'
+  },
+  fr: {
+    greeting: 'Bonjour',
+    headline: 'Par où commencer ?',
+    oneliner: '15 ans en CX, succès client et opérations. Posez-moi toutes vos questions.',
+    placeholder: 'Posez-moi une question, ou choisissez un sujet ci-dessous…',
+    chips: ['Parcours professionnel', 'Au-delà du travail', 'Ce que j’ai créé', 'Mon histoire', 'Me contacter', 'Pourquoi moi ?', 'Prendre rendez-vous'],
+    respondingLabel: 'Baris répond',
+    askAnother: 'Autre question',
+    wantMore: 'Vous voulez en savoir plus ?'
+  },
+  tr: {
+    greeting: 'Merhaba',
+    headline: 'Nereden başlayalım?',
+    oneliner: 'CX, müşteri başarısı ve operasyonlarda 15 yıl. Hakkımda her şeyi sorabilirsiniz.',
+    placeholder: 'Hakkımda bir şeyler sorun ya da aşağıdan konu seçin…',
+    chips: ['Kariyer yolculuğu', 'İş dışında', 'Yaptıklarım', 'Hikayem', 'İletişime geçelim', 'Neden ben?', 'Görüşme ayarla'],
+    respondingLabel: 'Barış yanıtlıyor',
+    askAnother: 'Başka bir şey sor',
+    wantMore: 'Daha fazla bilgi almak ister misiniz?'
+  }
+};
+
+const CHIP_QUESTIONS = {
+  en: [
+    'Tell me about his professional experience in detail',
+    'What are his hobbies and personal interests?',
+    'Tell me about his side projects',
+    'Tell me his life story — where he grew up and how he got here',
+    'How can someone reach out to connect with Baris? Give a warm, inviting response and tell them to click the email or LinkedIn link in the footer, or book time directly via Calendly.',
+    'Why should I hire Baris? Give me the full pitch.'
+  ],
+  fr: [
+    'Parlez-moi en détail de son expérience professionnelle',
+    'Quels sont ses loisirs et intérêts personnels ?',
+    'Parlez-moi de ses projets parallèles',
+    'Racontez-moi son histoire — d’où il vient et comment il est arrivé ici',
+    'Comment peut-on contacter Baris ? Donnez une réponse chaleureuse et invitez à cliquer sur les liens en bas de page.',
+    'Pourquoi devrais-je recruter Baris ? Donnez-moi le discours complet.'
+  ],
+  tr: [
+    'Profesyonel deneyimi hakkında detaylı bilgi verin',
+    'Hobileri ve kişisel ilgi alanları nelerdir?',
+    'Yan projeleri hakkında bilgi verin',
+    'Hayat hikayesini anlatın — nereden geldiğini ve buraya nasıl ulaştığını',
+    'Baris ile nasıl iletişime geçilebilir? Sıcak ve davetkar bir yanıt verin, footer’daki bağlantılara yönlendirin.',
+    'Neden Baris’i işe almalıyım? Tam sunumu yapın.'
+  ]
+};
+
+const LANG_INSTRUCTION = {
+  en: '',
+  fr: 'IMPORTANT: Respond ONLY in French (français). All your answers must be in French regardless of the question language.',
+  tr: 'IMPORTANT: Respond ONLY in Turkish (Türkçe). All your answers must be in Turkish regardless of the question language.'
+};
+
+function setLang(lang, btn) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const L = LANG_LABELS[lang];
+  const Q = CHIP_QUESTIONS[lang];
+
+  document.querySelector('.greeting').innerHTML = '<span class="greeting-star">✦</span> ' + L.greeting;
+  document.querySelector('h1').textContent = L.headline;
+  document.querySelector('.one-liner').textContent = L.oneliner;
+  document.getElementById('chat-input').placeholder = L.placeholder;
+  document.querySelector('#ask-another .ask-another-text').textContent = L.wantMore;
+  document.querySelector('#ask-another .ask-another-btn').textContent = L.askAnother;
+  document.querySelector('.response-label').innerHTML = '<div class="resp-dot"></div> ' + L.respondingLabel;
+
+  const chips = document.querySelectorAll('.chip:not(.chip-book)');
+  chips.forEach((chip, i) => {
+    const ci = chip.querySelector('.ci');
+    const icon = ci ? ci.outerHTML : '';
+    chip.innerHTML = icon + ' ' + L.chips[i];
+    if (ci) chip.querySelector('.ci');
+    chip.setAttribute('data-q', Q[i]);
+  });
+
+  const bookBtn = document.querySelector('.chip-book');
+  const bookDot = bookBtn.querySelector('.book-dot');
+  bookBtn.innerHTML = '';
+  bookBtn.appendChild(bookDot);
+  bookBtn.appendChild(document.createTextNode(' ' + L.chips[6]));
+}
+
 let activeChip = null;
 
 textarea.addEventListener('input', () => {
@@ -685,7 +813,7 @@ async function sendMessage(chipLabel) {
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
-        system: SYSTEM_PROMPT,
+        system: SYSTEM_PROMPT + (LANG_INSTRUCTION[currentLang] ? '\n\n' + LANG_INSTRUCTION[currentLang] : ''),
         messages: [{ role: 'user', content: question }]
       })
     });
