@@ -165,7 +165,11 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
   min-height: 26px; max-height: 200px; line-height: 1.65;
   overflow-y: auto; word-wrap: break-word; white-space: pre-wrap;
 }
-#chat-input::placeholder { color: var(--stone); }
+#chat-input::placeholder {
+  color: var(--stone);
+  white-space: normal;
+  word-wrap: break-word;
+}
 
 .input-footer {
   display: flex; align-items: center;
@@ -399,7 +403,7 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
 
   .input-wrap { max-width: 100%; }
 
-  #chat-input { font-size: 0.92rem; max-height: 160px; overflow-y: auto; }
+  #chat-input { font-size: 0.88rem; max-height: 160px; overflow-y: auto; }
   .input-box { padding: 1rem 1.1rem; }
 
   .input-hint { font-size: 0.72rem; }
