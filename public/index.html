@@ -626,3 +626,18 @@ function typeText(html, speed = 16) {
   const interval = setInterval(() => {
     i += Math.ceil(speed / 4);
     responseText.innerHTML = plain
+    .slice(0, i);
+    if (i >= plain.length) {
+      clearInterval(interval);
+      responseText.innerHTML = html;
+      askAnother.classList.add('visible');
+    }
+  }, speed);
+}
+
+window.askChip = askChip;
+window.resetToStart = resetToStart;
+window.sendMessage = sendMessage;
+</script>
+</body>
+</html>
