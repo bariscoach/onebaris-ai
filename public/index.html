@@ -32,23 +32,9 @@ html, body {
   background: var(--bg);
 }
 
-/* Background blobs */
+/* Background Siri orb */
 .bg-canvas { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
-.bg-blob {
-  position: absolute; border-radius: 50%;
-  filter: blur(90px); opacity: 0.5;
-  animation: drift 20s ease-in-out infinite alternate;
-}
-.bg-blob:nth-child(1) { width: 55vw; height: 55vw; top: -20%; left: -10%; background: radial-gradient(circle, #c8d9f5 0%, transparent 70%); animation-duration: 22s; }
-.bg-blob:nth-child(2) { width: 45vw; height: 45vw; top: 25%; right: -12%; background: radial-gradient(circle, #d6e4f7 0%, transparent 70%); animation-duration: 17s; animation-delay: -6s; }
-.bg-blob:nth-child(3) { width: 38vw; height: 38vw; bottom: -10%; left: 25%; background: radial-gradient(circle, #e0eaf8 0%, transparent 70%); animation-duration: 25s; animation-delay: -12s; }
-
-@keyframes drift {
-  0%   { transform: translate(0,0) scale(1); }
-  33%  { transform: translate(3%,5%) scale(1.05); }
-  66%  { transform: translate(-2%,2%) scale(0.96); }
-  100% { transform: translate(2%,-4%) scale(1.03); }
-}
+#siri-canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.85; }
 
 /* Page */
 .page {
@@ -72,6 +58,8 @@ html, body {
   border-bottom: 1px solid var(--border);
   animation: fadeUp 0.6s ease both;
 }
+.logo-link { display: flex; align-items: center; text-decoration: none; }
+.logo-link:hover .logo-icon { opacity: 0.85; }
 .logo-icon { width: 32px; height: 32px; margin-right: 0.6rem; flex-shrink: 0; }
 .logo-one  { font-size: 1.45rem; font-weight: 300; color: var(--slate); letter-spacing: -0.01em; }
 .logo-baris { font-size: 1.45rem; font-weight: 700; color: var(--blue); letter-spacing: -0.01em; }
@@ -230,15 +218,15 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
 
 /* Book button */
 .chip-book {
-  text-decoration: none; background: var(--ink);
-  border-color: var(--ink); color: white; font-weight: 500;
+  text-decoration: none; background: var(--blue);
+  border-color: var(--blue); color: white; font-weight: 500;
   display: inline-flex; align-items: center; gap: 0.45rem;
   animation: buttonPulse 2.5s ease-in-out infinite;
 }
 .chip-book:hover {
-  background: linear-gradient(90deg, #4285f4, #7b68ee, #a855f7, #ec4899);
-  border-color: transparent; color: white;
-  transform: translateY(-2px); box-shadow: 0 6px 20px rgba(66,133,244,0.3);
+  background: var(--blue-light);
+  border-color: var(--blue-light); color: white;
+  transform: translateY(-2px); box-shadow: 0 6px 20px rgba(47,107,191,0.35);
   animation: none;
 }
 .book-dot {
@@ -391,18 +379,31 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
   .input-hint { font-size: 0.72rem; }
 
   /* Chips */
-  .chips { gap: 0.5rem; }
+  .chips { gap: 0.5rem; margin-top: 1rem; }
   .chip {
     font-size: 0.78rem;
     padding: 0.45rem 0.85rem;
     white-space: nowrap;
+    flex: 1 1 calc(50% - 0.25rem);
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    align-items: center;
   }
   .chips-center {
     flex-wrap: wrap;
     justify-content: flex-start;
     gap: 0.5rem;
+    width: 100%;
   }
-  .chip-book { white-space: nowrap; }
+  .chips-center .chip {
+    flex: 1 1 calc(50% - 0.25rem);
+  }
+  .chip-book {
+    flex: 1 1 100%;
+    justify-content: center;
+    white-space: nowrap;
+  }
 
   /* Response card */
   #response-area { margin-top: 1rem; }
@@ -449,21 +450,21 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
 <body>
 
 <div class="bg-canvas">
-  <div class="bg-blob"></div>
-  <div class="bg-blob"></div>
-  <div class="bg-blob"></div>
+  <canvas id="siri-canvas"></canvas>
 </div>
 
 <div class="page">
 
   <div class="logo">
-    <svg class="logo-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="18" cy="18" r="17" fill="#2f6bbf"/>
-      <circle cx="13" cy="17" r="2" fill="white"/>
-      <circle cx="23" cy="17" r="2" fill="white"/>
-      <path d="M12 23c1.5 2.5 4 4 6 4s4.5-1.5 6-4" stroke="white" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-    <span class="logo-one">One</span><span class="logo-baris">Baris</span><span class="logo-space"> </span><span class="logo-ai">AI</span>
+    <a href="https://barishiz.com" target="_blank" class="logo-link">
+      <svg class="logo-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="18" cy="18" r="17" fill="#2f6bbf"/>
+        <circle cx="13" cy="17" r="2" fill="white"/>
+        <circle cx="23" cy="17" r="2" fill="white"/>
+        <path d="M12 23c1.5 2.5 4 4 6 4s4.5-1.5 6-4" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="logo-one">One</span><span class="logo-baris">Baris</span><span class="logo-space"> </span><span class="logo-ai">AI</span>
+    </a>
   </div>
 
   <div class="header">
@@ -471,13 +472,13 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
     <h1>Where should we start?</h1>
   </div>
 
-  <p class="one-liner">15 years in CX, customer success, and business operations. Ask me anything.</p>
+  <p class="one-liner">15 years in CX, customer success, and business operations. Ask me anything about me.</p>
 
   <div class="input-wrap">
     <div class="rainbow-wrap">
       <div class="input-box">
         <div class="input-content">
-          <textarea id="chat-input" placeholder="Ask me anything, or pick a topic below…" rows="1"></textarea>
+          <textarea id="chat-input" placeholder="Ask me anything about me, or pick a topic below…" rows="1"></textarea>
           <div class="input-footer">
             <span class="input-hint">Press <kbd>↵</kbd> to send</span>
             <button class="send-btn" id="send-btn" onclick="sendMessage()">
@@ -552,7 +553,7 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 const SYSTEM_PROMPT = `You are an interactive personal assistant representing Barış Hız (pronounced "BAH-rish HUZ"). Your ONLY purpose is to answer questions about Barış — his career, experience, skills, background, side projects, and how to contact him. You are not a general assistant.
 
 STRICT RULES:
@@ -639,11 +640,9 @@ textarea.addEventListener('keydown', e => {
 });
 
 function askChip(el) {
-  // Highlight active chip
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('active-chip'));
   el.classList.add('active-chip');
   activeChip = el;
-
   const question = el.getAttribute('data-q');
   textarea.value = question;
   textarea.style.height = 'auto';
@@ -692,7 +691,7 @@ async function sendMessage(chipLabel) {
     });
 
     const data = await res.json();
-    const text = data.content?.[0]?.text || "I would love to answer that. Feel free to reach out at barishiz@gmail.com!";
+    const text = data.content?.[0]?.text || "I would love to answer that. Feel free to reach out via the links below!";
     const len = text.length;
     const speed = len < 300 ? 12 : len < 600 ? 16 : 22;
     typeText(formatText(text), speed);
@@ -715,15 +714,68 @@ function formatText(text) {
     .join('');
 }
 
-function typeText(html, speed = 16) {
+function typeText(html, speed) {
+  speed = speed || 16;
   const plain = html.replace(/<[^>]+>/g, '');
   let i = 0;
   responseText.innerHTML = '';
   const interval = setInterval(() => {
     i += Math.ceil(speed / 4);
-    responseText.innerHTML = plain
-    .slice(0, i);
+    responseText.innerHTML = plain.slice(0, i);
     if (i >= plain.length) {
       clearInterval(interval);
       responseText.innerHTML = html;
-      askAnother.classList.add('visib
+      askAnother.classList.add('visible');
+    }
+  }, speed);
+}
+
+window.askChip = askChip;
+window.resetToStart = resetToStart;
+window.sendMessage = sendMessage;
+
+// Siri-style background orb
+(function() {
+  const canvas = document.getElementById('siri-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, t = 0;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const orbs = [
+    { x: 0.50, y: 0.40, r: 0.45, speed: 0.00008, phase: 0,   colors: ['rgba(47,107,191,0.16)', 'rgba(77,135,214,0.07)', 'transparent'] },
+    { x: 0.25, y: 0.60, r: 0.30, speed: 0.00012, phase: 2.1, colors: ['rgba(107,157,231,0.13)', 'rgba(168,85,247,0.05)', 'transparent'] },
+    { x: 0.75, y: 0.60, r: 0.30, speed: 0.00010, phase: 4.2, colors: ['rgba(66,133,244,0.11)', 'rgba(47,107,191,0.04)', 'transparent'] },
+    { x: 0.50, y: 0.75, r: 0.25, speed: 0.00009, phase: 1.0, colors: ['rgba(147,197,253,0.12)', 'rgba(99,160,240,0.04)', 'transparent'] },
+  ];
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    t++;
+    orbs.forEach(function(orb) {
+      var pulse = 1 + 0.12 * Math.sin(t * orb.speed * 1000 + orb.phase);
+      var wobbleX = orb.x * W + 30 * Math.sin(t * orb.speed * 700 + orb.phase);
+      var wobbleY = orb.y * H + 20 * Math.cos(t * orb.speed * 900 + orb.phase + 1);
+      var radius = orb.r * Math.min(W, H) * pulse;
+      var grad = ctx.createRadialGradient(wobbleX, wobbleY, 0, wobbleX, wobbleY, radius);
+      grad.addColorStop(0, orb.colors[0]);
+      grad.addColorStop(0.5, orb.colors[1]);
+      grad.addColorStop(1, orb.colors[2]);
+      ctx.beginPath();
+      ctx.arc(wobbleX, wobbleY, radius, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+</script>
+</body>
+</html>
