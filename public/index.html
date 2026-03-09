@@ -75,70 +75,83 @@ html, body {
 .logo-link { display: flex; align-items: center; text-decoration: none; }
 
 
-/* Resume chip */
+/* Footer brand links */
+.footer-brand-link {
+  display: flex !important;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.65rem !important;
+  border-radius: 6px;
+  transition: all 0.2s;
+  position: relative; z-index: 1;
+  text-decoration: none;
+  opacity: 0.82;
+}
+.footer-brand-link:hover { background: rgba(255,255,255,0.12) !important; opacity: 1; }
+.brand-wordmark {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.88rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+.brand-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 5px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.75rem; font-weight: 800;
+  color: white; flex-shrink: 0;
+}
+
+/* Resume chip — rainbow gradient as default */
 .chip-resume {
   text-decoration: none;
-  background: white;
-  border-color: var(--blue);
-  color: var(--blue);
-  font-weight: 400;
+  background: linear-gradient(90deg, #4285f4, #7b68ee, #a855f7, #ec4899, #ef4444, #f97316, #eab308, #22c55e, #4285f4) !important;
+  background-size: 300% 100% !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  -webkit-text-fill-color: white !important;
+  color: white !important;
+  border-color: transparent !important;
+  font-weight: 500;
   position: relative; overflow: hidden;
+  animation: rainbowShift 6s linear infinite;
 }
 .chip-resume:hover {
-  background: var(--blue); color: white;
-  border-color: var(--blue);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(47,107,191,0.25);
+  box-shadow: 0 6px 20px rgba(66,133,244,0.4);
+  opacity: 0.92;
 }
-.chip-resume::after {
+.chip-resume::before {
   content: '';
   position: absolute;
-  top: 0; left: -100%;
-  width: 60%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(47,107,191,0.1), transparent);
-  animation: shimmer 2.5s ease-in-out infinite;
+  top: -50%; left: -75%;
+  width: 50%; height: 200%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(255,255,255,0.55) 50%,
+    transparent 80%
+  );
+  transform: skewX(-15deg);
+  animation: chipShine 5.6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
 }
+@keyframes chipShine {
+  0%   { left: -75%; opacity: 0; }
+  10%  { opacity: 1; }
+  50%  { left: 130%; opacity: 1; }
+  51%  { opacity: 0; }
+  100% { left: 130%; opacity: 0; }
+}
+.chip-resume::after { display: none; }
 @keyframes shimmer {
   0%   { left: -100%; }
   60%  { left: 150%; }
   100% { left: 150%; }
 }
 
-.resume-btn {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  margin-top: 1.1rem;
-  padding: 0.55rem 1.2rem;
-  background: white;
-  border: 1.5px solid var(--blue);
-  border-radius: 100px;
-  color: var(--blue);
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 0.82rem; font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.25s;
-  animation: fadeUp 0.7s 0.28s ease both;
-}
-.resume-btn:hover {
-  background: var(--blue); color: white;
-  box-shadow: 0 4px 16px rgba(47,107,191,0.3);
-  transform: translateY(-1px);
-}
-.resume-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
-.resume-btn::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%;
-  width: 60%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(47,107,191,0.12), transparent);
-  animation: shimmer 2.5s ease-in-out infinite;
-}
 
-  60%  { left: 150%; }
-  100% { left: 150%; }
-}
 
 /* Language switcher */
 .lang-switcher {
@@ -745,17 +758,25 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
   <div class="footer-divider"></div>
   <div class="footer-group">
     <span class="footer-label">Built by Baris</span>
-    <a href="https://nordcx.com" target="_blank">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-      <span class="link-text">NordCX</span>
+    <a href="https://nordcx.com" target="_blank" class="footer-brand-link">
+      <span class="brand-wordmark"><span style="color:rgba(255,255,255,0.92);font-weight:700;">Nord</span><span style="color:#a78bfa;font-weight:800;">CX</span></span>
     </a>
-    <a href="https://pageready.ca" target="_blank">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      <span class="link-text">PageReady</span>
+    <a href="https://pageready.ca" target="_blank" class="footer-brand-link">
+      <span class="brand-icon" style="background:#2563eb;padding:0;width:22px;height:22px;border-radius:6px;overflow:hidden;">
+        <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px;">
+          <rect width="22" height="22" rx="6" fill="#2563eb"/>
+          <rect x="5" y="4" width="12" height="14" rx="2" fill="white"/>
+          <line x1="7.5" y1="8" x2="14.5" y2="8" stroke="#2563eb" stroke-width="1.2" stroke-linecap="round"/>
+          <line x1="7.5" y1="11" x2="12" y2="11" stroke="#2563eb" stroke-width="1.2" stroke-linecap="round"/>
+          <circle cx="14" cy="14.5" r="3.5" fill="#2563eb"/>
+          <polyline points="12.2,14.5 13.3,15.7 15.8,13.3" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span class="brand-wordmark"><span style="color:rgba(255,255,255,0.92);font-weight:600;">pageready</span><span style="color:rgba(255,255,255,0.45);font-weight:400;">.ca</span></span>
     </a>
-    <a href="https://wordhuntly.com" target="_blank">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      <span class="link-text">WordHuntly</span>
+    <a href="https://wordhuntly.com" target="_blank" class="footer-brand-link">
+      <span class="brand-icon" style="background:#1e3a5f;color:#60a5fa;">W</span>
+      <span class="brand-wordmark"><span style="color:rgba(255,255,255,0.92);font-weight:700;">wordhuntly</span><span style="color:#60a5fa;font-weight:800;">.</span></span>
     </a>
   </div>
 </div>
