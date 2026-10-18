@@ -519,12 +519,13 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
   background: var(--blue);
   border-top: none;
   display: flex; align-items: center;
-  justify-content: center; gap: 2rem;
+  justify-content: center; gap: 0.4rem 2rem;
+  flex-wrap: wrap;
   padding: 0.8rem 2rem;
   animation: fadeUp 1s 0.5s ease both; z-index: 10;
   overflow: hidden;
 }
-.footer-group { display: flex; align-items: center; gap: 0.4rem; }
+.footer-group { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; justify-content: center; }
 .footer-label {
   font-size: 0.7rem; letter-spacing: 0.1em;
   text-transform: uppercase; color: rgba(255,255,255,0.5);
@@ -778,6 +779,36 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
       <span class="brand-icon" style="background:#1e3a5f;color:#60a5fa;">W</span>
       <span class="brand-wordmark"><span style="color:rgba(255,255,255,0.92);font-weight:700;">wordhuntly</span><span style="color:#60a5fa;font-weight:800;">.</span></span>
     </a>
+    <a href="https://github.com/bariscoach/Uncloud" target="_blank" class="footer-brand-link">
+      <span class="brand-icon" style="background:none;padding:0;width:22px;height:22px;border-radius:6px;overflow:hidden;">
+        <!-- Uncloud: a sun coming out from behind a cloud -->
+        <svg viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px;">
+          <defs><linearGradient id="uncloud-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ab4f5"/><stop offset="1" stop-color="#1e6fd9"/></linearGradient></defs>
+          <rect width="22" height="22" rx="6" fill="url(#uncloud-sky)"/>
+          <g stroke="#ffe7a3" stroke-width="1.1" stroke-linecap="round">
+            <line x1="13" y1="3.2" x2="13" y2="4.6"/><line x1="18.6" y1="5.4" x2="17.6" y2="6.4"/><line x1="20.4" y1="11" x2="19" y2="11"/><line x1="7.4" y1="5.4" x2="8.4" y2="6.4"/>
+          </g>
+          <circle cx="13" cy="11" r="4.2" fill="#ffc93c"/>
+          <path d="M4.2 17.2h7.6a2.4 2.4 0 0 0 0-4.8 3.2 3.2 0 0 0-6.1-.6 2.7 2.7 0 0 0-1.5 5.4z" fill="white"/>
+        </svg>
+      </span>
+      <span class="brand-wordmark"><span style="color:rgba(255,255,255,0.92);font-weight:700;">uncloud</span></span>
+    </a>
+    <a href="https://somedaywall.com" target="_blank" class="footer-brand-link">
+      <span class="brand-icon" style="background:none;padding:0;width:22px;height:22px;border-radius:6px;overflow:hidden;">
+        <!-- Someday Wall: a small brick wall, one brick highlighted -->
+        <svg viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px;">
+          <rect width="22" height="22" rx="6" fill="#7c2d12"/>
+          <g fill="#fdba74">
+            <rect x="3" y="4.5" width="7.5" height="3.6" rx="0.8"/><rect x="11.5" y="4.5" width="7.5" height="3.6" rx="0.8"/>
+            <rect x="3" y="9.2" width="3.2" height="3.6" rx="0.8"/><rect x="15.8" y="9.2" width="3.2" height="3.6" rx="0.8"/>
+            <rect x="3" y="13.9" width="7.5" height="3.6" rx="0.8"/><rect x="11.5" y="13.9" width="7.5" height="3.6" rx="0.8"/>
+          </g>
+          <rect x="7.2" y="9.2" width="7.6" height="3.6" rx="0.8" fill="#ffffff"/>
+        </svg>
+      </span>
+      <span class="brand-wordmark"><span style="color:rgba(255,255,255,0.92);font-weight:600;">someday</span><span style="color:#fdba74;font-weight:800;">wall</span></span>
+    </a>
   </div>
 </div>
 
@@ -843,6 +874,7 @@ Playing keyboard since age 6, competed through high school. Fretless classical g
 SIDE PROJECTS:
 LogClaude (logclaude.com): A site collecting real, dated experiences from Claude users, where people log what using Claude, Claude Code, and Claude Cowork is actually like.
 Someday Wall (somedaywall.com): Visitors finish the sentence "One day, I will..." and their answer becomes a brick in a wall built by strangers.
+Uncloud (github.com/bariscoach/Uncloud): A free Mac app I'm building that copies a whole iCloud Photos library straight to an external drive at full quality, organised by month, by album, or all in one folder, without filling up the Mac first. It picks up where it left off if interrupted, verifies every file, and can find duplicates and clean up iCloud storage.
 This site (barishiz.com): an AI version of me that answers questions about my career, built with Claude.
 PageReady (pageready.ca): One-page websites for small businesses in Burlington, Oakville, and Milton, delivered in 48 hours.
 WordHuntly (wordhuntly.com): A word game built for fun.
