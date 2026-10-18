@@ -1,6 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
+<script>
+  // Dark is the default theme; a visitor who switched to light keeps it on their next visit.
+  try { if (localStorage.getItem('theme') === 'light') document.documentElement.classList.remove('dark'); } catch (e) {}
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OneBaris AI — Career, Background &amp; More</title>
@@ -752,7 +756,7 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
     </a>
     <div class="nav-right">
       <button class="dark-toggle" id="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">
-        <span class="dark-icon">🌙</span>
+        <span class="dark-icon">☀️</span>
       </button>
     </div>
   </div>
@@ -1148,6 +1152,11 @@ function resetToStart() {
 function toggleDark() {
   const isDark = document.documentElement.classList.toggle('dark');
   document.getElementById('dark-toggle').querySelector('.dark-icon').textContent = isDark ? '☀️' : '🌙';
+  try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+}
+// The toggle shows the theme it switches to.
+if (!document.documentElement.classList.contains('dark')) {
+  document.getElementById('dark-toggle').querySelector('.dark-icon').textContent = '🌙';
 }
 
 const FOLLOWUP_MAP = {
