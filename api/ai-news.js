@@ -1,9 +1,10 @@
+import { createMessage } from '../lib/model.js';
+
 // "AI News — What's Buzzing" for the ticker, made the same way as the Daily-Digest email: what's hot in
 // the last 24 hours on a few AI subreddits and AI news sites, curated by Claude into five plain-English
 // items. Reddit is read through its RSS feeds, since its JSON API refuses requests from servers.
 // Vercel's edge cache keeps the result for a day, so Claude runs about once a day, not on every visit.
 
-const MODEL = 'claude-haiku-5-5';
 const DAY = 24 * 60 * 60;
 const FEEDS = [
   { url: 'https://www.reddit.com/r/singularity/hot/.rss', source: 'r/singularity', take: 8 },
@@ -105,23 +106,16 @@ async function curate(apiKey, posts) {
     `Post ${i + 1} [${p.source}]\nTitle: ${p.title}${p.text ? `\nText: ${p.text}` : ''}`
   ).join('\n\n---\n\n');
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
-    signal: AbortSignal.timeout(30000),
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 900,
-      // A short, structured task: thinking would only use up the token budget.
-      thinking: { type: 'disabled' },
-      messages: [{
-        role: 'user',
-        content: `You are curating a "What's buzzing in AI" news ticker for a personal website, read by non-technical visitors.\n\nFrom the posts below, pick the 5 most newsworthy AI updates: new model or product launches, tool releases, notable use cases, industry moves, research breakthroughs. Skip memes, personal stories, rants, politics, and low-substance posts.\n\nFor each pick, write a short headline (at most 10 words, no clickbait, no emojis) and one plain-English sentence (at most 22 words) explaining it. Return ONLY a JSON array: [{"index": <1-based post number>, "headline": "...", "summary": "..."}]\n\n${list}`,
-      }],
-    }),
+  const { response, data } = await createMessage(apiKey, {
+    max_tokens: 900,
+    // A short, structured task: thinking would only use up the token budget.
+    thinking: { type: 'disabled' },
+    messages: [{
+      role: 'user',
+      content: `You are curating a "What's buzzing in AI" news ticker for a personal website, read by non-technical visitors.\n\nFrom the posts below, pick the 5 most newsworthy AI updates: new model or product launches, tool releases, notable use cases, industry moves, research breakthroughs. Skip memes, personal stories, rants, politics, and low-substance posts.\n\nFor each pick, write a short headline (at most 10 words, no clickbait, no emojis) and one plain-English sentence (at most 22 words) explaining it. Return ONLY a JSON array: [{"index": <1-based post number>, "headline": "...", "summary": "..."}]\n\n${list}`,
+    }],
   });
   if (!response.ok) throw new Error(`Claude answered ${response.status}`);
-  const data = await response.json();
   const text = data.content?.find(block => block.type === 'text')?.text || '';
   const json = text.slice(text.indexOf('['), text.lastIndexOf(']') + 1);
   const picks = JSON.parse(json);

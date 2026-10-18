@@ -1,6 +1,7 @@
-// The model is set here, not by the page, so a retired model can be replaced in one place
-// and visitors can't use the API key for other models or larger replies.
-const MODEL = 'claude-sonnet-5-5';
+import { createMessage } from '../lib/model.js';
+
+// The model is chosen here, not by the page: always the cheapest available Claude model, picked
+// automatically (see lib/model.js), so visitors can't use the API key for other models or larger replies.
 const MAX_TOKENS = 1000;
 const MAX_QUESTION_LENGTH = 2000;
 
@@ -24,24 +25,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        max_tokens: MAX_TOKENS,
-        // Short conversational answers; thinking only slows the reply and can use up the token cap.
-        thinking: { type: 'disabled' },
-        ...(typeof system === 'string' ? { system } : {}),
-        messages
-      })
+    const { response, data } = await createMessage(apiKey, {
+      max_tokens: MAX_TOKENS,
+      // Short conversational answers; thinking only slows the reply and can use up the token cap.
+      thinking: { type: 'disabled' },
+      ...(typeof system === 'string' ? { system } : {}),
+      messages
     });
-
-    const data = await response.json();
 
     if (!response.ok) {
       console.error('Anthropic API error', response.status, data?.error?.message);
