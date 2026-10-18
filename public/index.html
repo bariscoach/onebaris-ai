@@ -1050,14 +1050,14 @@ async function sendMessage(chipLabel) {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      // The model and reply length are set by /api/chat.
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
         system: SYSTEM_PROMPT + (LANG_INSTRUCTION[currentLang] ? '\n\n' + LANG_INSTRUCTION[currentLang] : ''),
         messages: [{ role: 'user', content: question }]
       })
     });
 
+    if (!res.ok) throw new Error(`Chat API answered ${res.status}`);
     const data = await res.json();
     const text = data.content?.[0]?.text || "I would love to answer that. Feel free to reach out via the links below!";
     const len = text.length;
