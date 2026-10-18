@@ -34,6 +34,8 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: MODEL,
         max_tokens: MAX_TOKENS,
+        // Short conversational answers; thinking only slows the reply and can use up the token cap.
+        thinking: { type: 'disabled' },
         ...(typeof system === 'string' ? { system } : {}),
         messages
       })

@@ -75,6 +75,58 @@ html, body {
 .logo-link { display: flex; align-items: center; text-decoration: none; }
 
 
+/* AI news ticker */
+.news-ticker {
+  display: flex; align-items: center; gap: 0.6rem;
+  width: 100%; max-width: 100%; box-sizing: border-box;
+  margin: 0 0 1.6rem;
+  padding: 0.45rem 0.5rem 0.45rem 0.45rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.82rem;
+  animation: fadeUp 0.6s ease both;
+}
+.news-ticker[hidden] { display: none; }
+.news-label {
+  flex-shrink: 0;
+  padding: 0.22rem 0.65rem;
+  border-radius: 999px;
+  background: var(--blue-pale);
+  color: var(--blue);
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.news-viewport {
+  flex: 1; min-width: 0; overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 2rem, #000 calc(100% - 2rem), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 2rem, #000 calc(100% - 2rem), transparent);
+}
+.news-track {
+  display: flex; width: max-content;
+  animation: news-scroll var(--news-duration, 60s) linear infinite;
+}
+.news-ticker:hover .news-track,
+.news-ticker:focus-within .news-track { animation-play-state: paused; }
+.news-item {
+  color: var(--ink-soft);
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 0 1.4rem 0 0;
+}
+.news-item::before { content: "•"; color: var(--blue-light); margin-right: 1.4rem; }
+.news-item:hover, .news-item:focus-visible { color: var(--blue); text-decoration: underline; }
+.news-source { color: var(--muted); font-size: 0.74rem; margin-left: 0.35rem; }
+@keyframes news-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  /* No motion: the headlines can be scrolled sideways instead. */
+  .news-track { animation: none; }
+  .news-viewport { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+}
+
 /* Footer brand links */
 .footer-brand-link {
   display: flex !important;
@@ -681,6 +733,14 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
       <button class="dark-toggle" id="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">
         <span class="dark-icon">🌙</span>
       </button>
+    </div>
+  </div>
+
+  <!-- AI news ticker: filled from /api/ai-news, and stays hidden if that fails -->
+  <div class="news-ticker" id="news-ticker" hidden>
+    <span class="news-label">🤖 AI News</span>
+    <div class="news-viewport">
+      <div class="news-track" id="news-track"></div>
     </div>
   </div>
 
@@ -1294,6 +1354,31 @@ function fireConfetti() {
     .onfinish = () => el.remove();
   }
 }
+</script>
+<script>
+// AI news ticker: five items a day from /api/ai-news. The list is drawn twice so the scroll loops
+// seamlessly; the copy is hidden from screen readers and the keyboard.
+(async function loadNewsTicker() {
+  const ticker = document.getElementById('news-ticker');
+  const track = document.getElementById('news-track');
+  try {
+    const res = await fetch('/api/ai-news');
+    if (!res.ok) return;
+    const { items } = await res.json();
+    if (!Array.isArray(items) || items.length === 0) return;
+    const escape = text => String(text).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const safeLink = url => /^https:\/\//.test(url) ? url : '#';
+    const row = copy => items.map(item =>
+      `<a class="news-item" href="${escape(safeLink(item.link))}" target="_blank" rel="noopener noreferrer" title="${escape(item.summary || '')}"${copy ? ' tabindex="-1"' : ''}>` +
+      `${escape(item.headline)}<span class="news-source">${escape(item.source || '')}</span></a>`
+    ).join('');
+    track.innerHTML = `<div style="display:flex">${row(false)}</div><div style="display:flex" aria-hidden="true">${row(true)}</div>`;
+    track.style.setProperty('--news-duration', `${items.length * 9}s`);
+    ticker.hidden = false;
+  } catch (err) {
+    // No ticker rather than a broken one.
+  }
+})();
 </script>
 </body>
 </html>
