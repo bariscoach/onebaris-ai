@@ -79,6 +79,43 @@ html, body {
 .logo-link { display: flex; align-items: center; text-decoration: none; }
 
 
+/* Music player */
+.music-toggle { position: relative; margin-right: 0.45rem; }
+.music-bars { display: none; position: absolute; right: -3px; bottom: -3px; gap: 1.5px; align-items: flex-end;
+  height: 10px; padding: 2px 3px; border-radius: 6px; background: #1db954; }
+.music-bars i { display: block; width: 2px; background: white; border-radius: 1px; animation: musicBar 0.9s ease-in-out infinite; }
+.music-bars i:nth-child(2) { animation-delay: 0.2s; }
+.music-bars i:nth-child(3) { animation-delay: 0.4s; }
+.music-toggle.playing .music-bars { display: inline-flex; }
+@keyframes musicBar { 0%, 100% { height: 2px; } 50% { height: 7px; } }
+.music-panel {
+  position: fixed; z-index: 20;
+  top: 4.6rem; right: max(1rem, calc(50% - 350px + 1rem));
+  width: 340px; max-width: calc(100vw - 2rem);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  padding: 0.75rem;
+}
+/* Hidden without unloading, so the music keeps playing while the panel is closed. */
+.music-panel[hidden] { display: block; visibility: hidden; opacity: 0; pointer-events: none; }
+.music-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.55rem; }
+.music-title { font-weight: 700; font-size: 0.9rem; color: var(--ink); }
+.music-close { background: none; border: none; color: var(--muted); font-size: 1.3rem; line-height: 1; cursor: pointer; padding: 0 0.3rem; }
+.music-close:hover { color: var(--ink); }
+.music-controls { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.6rem; }
+.music-btn {
+  font: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  padding: 0.35rem 0.8rem; border-radius: 999px;
+  border: 1.5px solid var(--border); background: var(--bg); color: var(--ink);
+}
+.music-btn:hover:not(:disabled) { border-color: var(--blue); color: var(--blue); }
+.music-btn:disabled { opacity: 0.45; cursor: default; }
+.music-open { margin-left: auto; font-size: 0.75rem; color: var(--muted); text-decoration: none; }
+.music-open:hover { color: #1db954; }
+.music-embed { border-radius: 12px; overflow: hidden; min-height: 152px; background: var(--bg); }
+.music-note { margin: 0.5rem 0.1rem 0; font-size: 0.7rem; line-height: 1.4; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .music-bars i { animation: none; height: 6px; } }
+
 /* AI news ticker */
 .news-ticker {
   display: flex; align-items: center; gap: 0.6rem;
@@ -755,10 +792,29 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
       <span class="logo-one">One</span><span class="logo-baris">Baris</span><span class="logo-space"> </span><span class="logo-ai">AI</span>
     </a>
     <div class="nav-right">
+      <button class="dark-toggle music-toggle" id="music-toggle" type="button" title="75 min with me. (Spotify playlist)" aria-label="Open music player" aria-expanded="false" aria-controls="music-panel">
+        <span class="music-icon" aria-hidden="true">🎧</span>
+        <span class="music-bars" aria-hidden="true"><i></i><i></i><i></i></span>
+      </button>
       <button class="dark-toggle" id="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">
         <span class="dark-icon">☀️</span>
       </button>
     </div>
+  </div>
+
+  <!-- Music: Spotify's player loads only when the panel is first opened. -->
+  <div class="music-panel" id="music-panel" role="dialog" aria-label="Music player: 75 min with me." hidden>
+    <div class="music-head">
+      <span class="music-title">🎧 75 min with me.</span>
+      <button class="music-close" id="music-close" type="button" aria-label="Close music player">×</button>
+    </div>
+    <div class="music-controls">
+      <button class="music-btn" id="music-play" type="button" disabled>▶ Play</button>
+      <button class="music-btn" id="music-stop" type="button" disabled>■ Stop</button>
+      <a class="music-open" href="https://open.spotify.com/playlist/6oofEhA2ZEODAQoPx3ypop" target="_blank" rel="noopener noreferrer">Open in Spotify ↗</a>
+    </div>
+    <div class="music-embed"><div id="spotify-embed"></div></div>
+    <p class="music-note">Pick a song from the list. Without a Spotify login you'll hear 30-second previews. Use your device to change the volume.</p>
   </div>
 
   <!-- AI news ticker: filled from /api/ai-news, and stays hidden if that fails -->
@@ -1470,6 +1526,65 @@ if (window.matchMedia('(max-width: 500px)').matches) {
     micBtn.classList.add('listening');
     micBtn.setAttribute('aria-label', 'Stop dictation');
     recognition.start();
+  });
+})();
+</script>
+<script>
+// Music: Spotify's player for the "75 min with me." playlist. Spotify's script loads only when the panel
+// is first opened. Spotify's embed lets a page play, pause and seek, but not set the volume.
+(function setUpMusic() {
+  const toggle = document.getElementById('music-toggle');
+  const panel = document.getElementById('music-panel');
+  const playBtn = document.getElementById('music-play');
+  const stopBtn = document.getElementById('music-stop');
+  let controller = null;
+  let loading = false;
+  let isPlaying = false;
+
+  function setOpen(open) {
+    panel.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+    if (open) loadPlayer();
+  }
+
+  function showPlaying(playing) {
+    isPlaying = playing;
+    toggle.classList.toggle('playing', playing);
+    playBtn.textContent = playing ? '❚❚ Pause' : '▶ Play';
+  }
+
+  function loadPlayer() {
+    if (controller || loading) return;
+    loading = true;
+    window.onSpotifyIframeApiReady = IFrameAPI => {
+      IFrameAPI.createController(document.getElementById('spotify-embed'), {
+        uri: 'spotify:playlist:6oofEhA2ZEODAQoPx3ypop', width: '100%', height: 352,
+      }, ctrl => {
+        controller = ctrl;
+        playBtn.disabled = false;
+        stopBtn.disabled = false;
+        ctrl.addListener('playback_update', e => showPlaying(!e.data.isPaused));
+      });
+    };
+    const script = document.createElement('script');
+    script.src = 'https://open.spotify.com/embed/iframe-api/v1';
+    script.async = true;
+    script.onerror = () => { panel.querySelector('.music-note').textContent = "Spotify couldn't be loaded. Use Open in Spotify instead."; };
+    document.body.appendChild(script);
+  }
+
+  toggle.addEventListener('click', e => { e.stopPropagation(); setOpen(panel.hidden); });
+  document.getElementById('music-close').addEventListener('click', () => setOpen(false));
+  playBtn.addEventListener('click', () => controller && controller.togglePlay());
+  stopBtn.addEventListener('click', () => {
+    if (!controller) return;
+    controller.pause();
+    controller.seek(0);
+    showPlaying(false);
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !panel.hidden) setOpen(false); });
+  document.addEventListener('click', e => {
+    if (!panel.hidden && !panel.contains(e.target) && !toggle.contains(e.target)) setOpen(false);
   });
 })();
 </script>
