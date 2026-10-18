@@ -355,7 +355,7 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
 
 /* Rainbow border */
 .rainbow-wrap {
-  padding: 2px; border-radius: 20px; position: relative;
+  padding: 2px; border-radius: 28px; position: relative;
   background: linear-gradient(90deg, #4285f4, #7b68ee, #a855f7, #ec4899, #ef4444, #f97316, #eab308, #22c55e, #4285f4, #7b68ee, #a855f7, #ec4899);
   background-size: 300% 100%;
   animation: rainbowShift 8s linear infinite;
@@ -370,30 +370,33 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
 .input-wrap { width: 100%; max-width: 660px; animation: fadeUp 0.7s 0.22s ease both; }
 
 .input-box {
-  background: var(--surface); border: none; border-radius: 18px;
-  padding: 1.2rem 1.4rem;
+  background: var(--surface); border: none; border-radius: 26px;
+  padding: 0.4rem 0.45rem 0.4rem 1.3rem;
   box-shadow: 0 2px 16px rgba(47,107,191,0.07);
   transition: box-shadow 0.3s; position: relative;
 }
 .input-box:focus-within { box-shadow: 0 4px 24px rgba(47,107,191,0.12); }
-.input-content { position: relative; z-index: 1; }
+.input-content { position: relative; z-index: 1; display: flex; align-items: flex-end; gap: 0.4rem; }
 
 #chat-input {
   width: 100%; background: none; border: none; outline: none;
   color: var(--ink); font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.96rem; font-weight: 300; resize: none;
-  min-height: 26px; max-height: 200px; line-height: 1.65;
+  flex: 1; min-width: 0; padding: 0.42rem 0;
+  min-height: 24px; max-height: 200px; line-height: 1.5;
   overflow-y: auto; word-wrap: break-word; white-space: pre-wrap;
 }
 #chat-input::placeholder {
   color: var(--stone);
-  white-space: normal;
-  word-wrap: break-word;
+  /* One line, to fit the slim prompt bar. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .input-footer {
   display: flex; align-items: center;
-  justify-content: space-between; margin-top: 0.85rem;
+  gap: 0.25rem; flex-shrink: 0;
 }
 
 .input-hint { font-size: 0.69rem; color: var(--stone); letter-spacing: 0.04em; }
@@ -415,6 +418,20 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
 .send-btn.loading-state { opacity: 1; background: var(--stone); cursor: not-allowed; }
 .send-btn:not(.loading-state):hover { transform: scale(1.1); background: var(--blue-light); }
 .send-btn svg { width: 14px; height: 14px; fill: white; }
+
+/* Voice dictation */
+.mic-btn {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: none; border: none; cursor: pointer; color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+.mic-btn[hidden] { display: none; }
+.mic-btn svg { width: 17px; height: 17px; }
+.mic-btn:hover { background: var(--blue-pale); color: var(--blue); }
+.mic-btn.listening { background: #ef4444; color: white; animation: micPulse 1.4s ease-in-out infinite; }
+@keyframes micPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.45); } 50% { box-shadow: 0 0 0 7px rgba(239,68,68,0); } }
+@media (prefers-reduced-motion: reduce) { .mic-btn.listening { animation: none; } }
 
 /* Spinner inside send btn */
 .send-spinner {
@@ -571,19 +588,22 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
   background: var(--blue);
   border-top: none;
   display: flex; align-items: center;
-  justify-content: center; gap: 0.4rem 2rem;
-  flex-wrap: wrap;
-  padding: 0.8rem 2rem;
+  justify-content: center; gap: 0;
+  flex-wrap: wrap; align-items: stretch;
+  padding: 0;
   animation: fadeUp 1s 0.5s ease both; z-index: 10;
   overflow: hidden;
 }
-.footer-group { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; justify-content: center; }
+.footer-group { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; justify-content: center; padding: 0.8rem 2rem; position: relative; z-index: 1; }
+/* The footer splits in two: contact on the blue side, the things Baris built on a black side. */
+.footer-contact { flex: 1 1 auto; justify-content: flex-end; }
+.footer-built { flex: 1 1 auto; justify-content: flex-start; background: #0b0d12; }
 .footer-label {
   font-size: 0.7rem; letter-spacing: 0.1em;
   text-transform: uppercase; color: rgba(255,255,255,0.5);
   font-weight: 600; margin-right: 0.3rem;
 }
-.footer-divider { width: 1px; height: 22px; background: rgba(255,255,255,0.2); }
+.footer-divider { display: none; }
 .footer a {
   display: flex; align-items: center; gap: 0.35rem;
   color: rgba(255,255,255,0.85); font-size: 0.84rem; font-weight: 500;
@@ -630,7 +650,7 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
   .input-wrap { max-width: 100%; }
 
   #chat-input { font-size: 0.88rem; max-height: 160px; overflow-y: auto; }
-  .input-box { padding: 1rem 1.1rem; }
+  .input-box { padding: 0.35rem 0.4rem 0.35rem 1.1rem; }
 
   .input-hint { font-size: 0.72rem; }
 
@@ -671,13 +691,14 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
   /* Footer: two compact rows */
   .footer {
     flex-direction: column;
-    gap: 0.35rem;
-    padding: 0.6rem 1rem;
+    gap: 0;
+    padding: 0;
   }
   .footer-group {
     gap: 0.25rem;
     flex-wrap: wrap;
     justify-content: center;
+    padding: 0.45rem 1rem;
   }
   .footer-divider { display: none; }
   .footer-label { display: none; }
@@ -694,7 +715,7 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
   .chip { font-size: 0.74rem; padding: 0.4rem 0.7rem; }
   .chips { gap: 0.4rem; }
   .footer a { font-size: 0.7rem; }
-  .footer { padding: 0.5rem 0.75rem; }
+  .footer-group { padding: 0.4rem 0.75rem; }
 }
 
 @media (min-width: 769px) {
@@ -725,11 +746,6 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
       <span class="logo-one">One</span><span class="logo-baris">Baris</span><span class="logo-space"> </span><span class="logo-ai">AI</span>
     </a>
     <div class="nav-right">
-      <div class="lang-switcher">
-        <button class="lang-btn active" onclick="setLang('en', this)"><span class="flag">🇬🇧</span> EN</button>
-        <button class="lang-btn" onclick="setLang('fr', this)"><span class="flag">🇫🇷</span> FR</button>
-        <button class="lang-btn" onclick="setLang('tr', this)"><span class="flag">🇹🇷</span> TR</button>
-      </div>
       <button class="dark-toggle" id="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">
         <span class="dark-icon">🌙</span>
       </button>
@@ -758,7 +774,9 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
         <div class="input-content">
           <textarea id="chat-input" placeholder="Ask me anything, or pick a topic below…" rows="1"></textarea>
           <div class="input-footer">
-            <span class="input-hint">Press <kbd>↵</kbd> to send</span>
+            <button class="mic-btn" id="mic-btn" type="button" title="Dictate" aria-label="Dictate your question" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="17" x2="12" y2="22"/></svg>
+            </button>
             <button class="send-btn" id="send-btn" onclick="sendMessage()">
               <svg class="send-icon" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
               <div class="send-spinner"></div>
@@ -805,7 +823,7 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
 
 <div class="footer">
   <canvas id="footer-canvas"></canvas>
-  <div class="footer-group">
+  <div class="footer-group footer-contact">
     <span class="footer-label">Contact</span>
     <a href="mailto:barishiz@gmail.com">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -817,7 +835,7 @@ h1 em { font-style: normal; font-weight: 300; color: var(--blue); }
     </a>
   </div>
   <div class="footer-divider"></div>
-  <div class="footer-group">
+  <div class="footer-group footer-built">
     <span class="footer-label">Built by Baris</span>
     <a href="https://nordcx.com" target="_blank" class="footer-brand-link">
       <span class="brand-wordmark"><span style="color:rgba(255,255,255,0.92);font-weight:700;">Nord</span><span style="color:#a78bfa;font-weight:800;">CX</span></span>
@@ -1378,6 +1396,51 @@ function fireConfetti() {
   } catch (err) {
     // No ticker rather than a broken one.
   }
+})();
+</script>
+<script>
+// Voice dictation with the browser's built-in speech recognition (Chrome, Edge and Safari). The button
+// only appears where it's supported. What's heard is typed into the prompt; nothing is sent until the
+// visitor presses send.
+// On phones the full placeholder doesn't fit the slim prompt bar.
+if (window.matchMedia('(max-width: 500px)').matches) {
+  document.getElementById('chat-input').placeholder = 'Ask me anything…';
+}
+
+(function setUpDictation() {
+  const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const micBtn = document.getElementById('mic-btn');
+  const input = document.getElementById('chat-input');
+  if (!Recognition || !micBtn || !input) return;
+  micBtn.hidden = false;
+  let recognition = null;
+  micBtn.addEventListener('click', () => {
+    if (recognition) { recognition.stop(); return; }
+    recognition = new Recognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = true;
+    recognition.continuous = false;
+    const before = input.value.trim();
+    recognition.onresult = event => {
+      const heard = Array.from(event.results).map(r => r[0].transcript).join('');
+      input.value = (before ? before + ' ' : '') + heard;
+      input.dispatchEvent(new Event('input'));
+    };
+    recognition.onerror = event => {
+      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+        micBtn.title = 'Allow microphone access to dictate';
+      }
+    };
+    recognition.onend = () => {
+      recognition = null;
+      micBtn.classList.remove('listening');
+      micBtn.setAttribute('aria-label', 'Dictate your question');
+      input.focus();
+    };
+    micBtn.classList.add('listening');
+    micBtn.setAttribute('aria-label', 'Stop dictation');
+    recognition.start();
+  });
 })();
 </script>
 </body>
